@@ -1,0 +1,160 @@
+/* ============================================================
+   Resume page — a large version of the nav's gold picture frame,
+   holding the actual resume instead of a small icon. The gold gradient
+   and shadow recipe are copied verbatim from nav.css's .frame-btn so
+   the two read as the same object at different sizes; everything
+   inside is set in EB Garamond / Cinzel to match the book-modal's
+   title-page typography elsewhere on the site.
+   ============================================================ */
+
+.resume-frame{
+  position:relative;
+  /* % rather than vw: .main already excludes the sidebar's width from
+     its own box (see site.css), so a percentage of it can't overflow
+     past the sidebar the way 92vw of the full viewport would */
+  width:min(60rem, 100%);
+  padding:1.6rem;
+  background:linear-gradient(155deg,#f6d68c 0%,var(--gold) 42%,#8a661f 82%,#f1c876 100%);
+  box-shadow:
+    inset 0 .09rem 0 rgba(255,255,255,.55),
+    inset 0 -.12rem 0 rgba(0,0,0,.35),
+    0 1.2rem 2.4rem rgba(0,0,0,.32);
+  /* settles into place on load, echoing the frame it grew from on the
+     way in from the nav (see nav.js) */
+  animation:resume-settle .5s cubic-bezier(.22,.9,.32,1.12) both;
+}
+@keyframes resume-settle{
+  from{opacity:0;transform:scale(.92)}
+  to{opacity:1;transform:scale(1)}
+}
+@media (prefers-reduced-motion:reduce){
+  .resume-frame{animation:none}
+}
+
+.resume-frame__mat{
+  background:var(--bone);
+  padding:1.6rem;
+  box-shadow:inset 0 .1rem .35rem rgba(0,0,0,.24);
+}
+
+.resume-frame__sheet{
+  background:var(--cream);
+  box-shadow:inset 0 0 0 .07rem rgba(34,31,30,.18);
+  padding:2.4rem clamp(1.4rem, 4vw, 3rem) 2.8rem;
+}
+
+/* ----------------------------- header ----------------------------- */
+
+.resume-name{
+  font-family:"Cinzel",Georgia,serif;
+  font-weight:700;
+  font-size:clamp(1.5rem, 4vw, 2rem);
+  letter-spacing:.03em;
+  text-align:center;
+  color:var(--ink);
+}
+
+.resume-contact,
+.resume-skills{
+  font-family:"EB Garamond","Garamond",Georgia,serif;
+  text-align:center;
+  color:var(--note);
+  font-size:.9rem;
+}
+.resume-contact{margin-top:.6rem}
+.resume-skills{margin-top:.35rem}
+.resume-skills strong{
+  font-weight:700;
+  color:var(--ink);
+}
+
+.resume-frame__sheet > hr{
+  border:none;
+  border-top:.06rem solid var(--sand);
+  margin:1.4rem 0;
+}
+
+/* ----------------------------- sections ----------------------------- */
+
+.resume-section{
+  font-family:"Cinzel",Georgia,serif;
+  font-weight:600;
+  font-size:.95rem;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--ink);
+  border-bottom:.09rem solid var(--gold);
+  padding-bottom:.3rem;
+  margin-top:1.8rem;
+  margin-bottom:1rem;
+}
+.resume-section:first-of-type{margin-top:1.6rem}
+
+.resume-entry + .resume-entry{margin-top:1.2rem}
+
+.resume-entry-head{
+  display:flex;
+  align-items:baseline;
+  gap:.8rem;
+  /* same wrap-reverse + auto-margin pairing as the book modal: on a
+     narrow screen the date gets its own line above the title rather
+     than crowding below it, and still sits flush right either way */
+  flex-wrap:wrap-reverse;
+}
+.resume-entry-title{
+  font-family:"EB Garamond","Garamond",Georgia,serif;
+  font-weight:700;
+  font-size:1.05rem;
+  letter-spacing:.02em;
+  color:var(--ink);
+}
+.resume-entry-when{
+  margin-left:auto;
+  font-family:"EB Garamond","Garamond",Georgia,serif;
+  font-weight:500;
+  font-size:.8rem;
+  color:var(--note);
+  white-space:nowrap;
+}
+.resume-entry-subtitle{
+  font-family:"EB Garamond","Garamond",Georgia,serif;
+  font-style:italic;
+  font-size:.88rem;
+  color:#5b5348;
+  margin-top:.1rem;
+}
+
+.resume-project{margin-top:.7rem}
+.resume-project > .resume-entry-subtitle{margin-top:0}
+
+.resume-bullets{
+  list-style:none;
+  margin-top:.4rem;
+  display:flex;
+  flex-direction:column;
+  gap:.35rem;
+}
+.resume-bullets li{
+  position:relative;
+  padding-left:1rem;
+  font-family:"EB Garamond","Garamond",Georgia,serif;
+  font-size:.88rem;
+  line-height:1.55;
+  color:var(--ink);
+}
+.resume-bullets li::before{
+  content:"–";
+  position:absolute;
+  left:0;
+  color:var(--note);
+}
+.resume-bullets li strong{
+  font-weight:700;
+  color:var(--ink);
+}
+
+@media (max-width:640px){
+  .resume-frame{padding:.9rem;width:96vw}
+  .resume-frame__mat{padding:.9rem}
+  .resume-frame__sheet{padding:1.8rem 1.2rem 2.2rem}
+}

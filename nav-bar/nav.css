@@ -12,6 +12,12 @@
   gap:1.5rem;
   flex:0 0 auto;
 }
+
+/* Home shows on every page except the homepage itself. index.html marks
+   its <body class="is-home"> — every other page just omits that class,
+   so a new page needs no extra markup to get Home for free. */
+.frame-btn[data-frame="home"]{display:flex}
+body.is-home .frame-btn[data-frame="home"]{display:none}
 .frame-btn{
   position:relative;
   display:flex;
@@ -45,6 +51,43 @@
 .frame-btn:focus-visible{
   outline:.15rem solid var(--wheat);
   outline-offset:.22rem;
+}
+
+/* ---------------------------------------------------------------
+   page transition: clicking a frame that leads to another page (see
+   nav.js) lifts it out of the sidebar, pins it in place with its exact
+   on-screen position, then grows it to fill the viewport before the
+   browser navigates — the frame becomes the page it's opening. Anchor
+   links within the same page (Home on the homepage, Sewing/Gobblet's
+   jump to a shelf) are left alone; nav.js only arms this for links to
+   a different document.
+   --------------------------------------------------------------- */
+.frame-btn--flying{
+  margin:0;
+  z-index:1000;
+  transition:top .5s cubic-bezier(.4,0,.2,1), left .5s cubic-bezier(.4,0,.2,1),
+    width .5s cubic-bezier(.4,0,.2,1), height .5s cubic-bezier(.4,0,.2,1);
+}
+.frame-btn--flying:hover,
+.frame-btn--flying:focus-visible{transform:none;filter:none}
+
+/* dims everything else while a frame is flying, so it reads as the
+   thing coming into focus rather than just growing on top of the page */
+body.is-page-transitioning .app{
+  transition:opacity .35s ease;
+  opacity:0;
+}
+body.is-page-transitioning::after{
+  content:"";
+  position:fixed;inset:0;
+  background:rgba(17,14,11,.35);
+  z-index:999;
+  pointer-events:none;
+}
+
+@media (prefers-reduced-motion:reduce){
+  .frame-btn--flying{transition:none}
+  body.is-page-transitioning .app{transition:none}
 }
 
 /* the mat board — thick, with pointed (square-cut) corners, the way
@@ -83,7 +126,35 @@
   line-height:1.35;
 }
 
-/* -- the three logos, drawn straight onto the full-bleed art color -- */
+/* -- the four logos, drawn straight onto the full-bleed art color -- */
+
+/* Home: an exact miniature of the bookshelf scene itself — the actual
+   markup from the homepage (see index.html), not a redrawn icon. Every
+   size in bookshelf.css is in em off of .scene's own font-size, so
+   shrinking that one property scales the whole illustration down as a
+   single piece, pixel-accurate to the full-size original.
+   container-type:size turns this tile into a query container so the
+   nested .scene can size itself as a percentage of the tile (cqw) —
+   the same fluid-with-the-frame behavior the other icons get for free
+   from using % units directly. */
+.frame-btn__art--home{
+  background:var(--page-bg);
+  container-type:size;
+}
+.frame-btn__art--home .scene{
+  position:absolute;
+  top:50%;left:50%;
+  /* 98em wide at heart (bookshelf.css) — 100/98 gets that to fill the
+     tile's width; a plain px fallback first for browsers without
+     container query units, which simply won't parse the cqw line */
+  font-size:10px;
+  font-size:1.02cqw;
+  transform:translate(-50%,-50%);
+  pointer-events:none;
+  /* the real .scene's entrance animation ends by setting transform:none,
+     which would wipe out the centering transform above */
+  animation:none;
+}
 
 /* a resume/CV icon — two stacked pages (outline only) with a person
    avatar and text lines, all drawn in white against the peri tile */

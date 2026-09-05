@@ -1,0 +1,206 @@
+/* ============================================================
+   Portfolio nav — ornate gold picture-frame buttons, salon-style.
+   Same flat-vector vocabulary as the bookshelf (flat fills, rounded
+   rects, thin lines). The palette tokens it needs — --gold, --cream,
+   --bone, --peri, --blush, --wine, --tomato, --char, --wheat — come
+   from bookshelf.css's :root.
+   ============================================================ */
+
+.frame-nav{
+  display:flex;
+  flex-direction:column;
+  gap:1.5rem;
+  flex:0 0 auto;
+}
+.frame-btn{
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  /* Fluid between the two layouts: full 12.5rem at 1000px and up, easing
+     down to 9rem by 750px, where the collapse block below takes over. The
+     mat and label track it so the frame scales as one piece. */
+  width:clamp(9rem, calc(22.4vw - 24px), 12.5rem);
+  padding:.6rem;
+  border-radius:0;
+  /* gold molding — same bevel formula as the bookshelf's click-badge
+     ribbons, angled to read as a moulded profile rather than a flat
+     ribbon */
+  background:linear-gradient(155deg,#f6d68c 0%,var(--gold) 42%,#8a661f 82%,#f1c876 100%);
+  box-shadow:
+    inset 0 .09rem 0 rgba(255,255,255,.55),
+    inset 0 -.12rem 0 rgba(0,0,0,.35),
+    0 .5rem 1rem rgba(0,0,0,.28);
+  text-decoration:none;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  transition:transform .18s cubic-bezier(.3,.6,.4,1), filter .18s ease;
+}
+.frame-btn:hover,
+.frame-btn:focus-visible{
+  transform:translateY(-.3rem);
+  filter:drop-shadow(0 .5rem .55rem rgba(0,0,0,.3));
+}
+.frame-btn:active{transform:translateY(-.08rem)}
+.frame-btn:focus-visible{
+  outline:.15rem solid var(--wheat);
+  outline-offset:.22rem;
+}
+
+/* the mat board — thick, with pointed (square-cut) corners, the way
+   a real mat's window opening is mitred rather than rounded */
+.frame-btn__mat{
+  position:relative;
+  width:100%;
+  background:var(--bone);
+  border-radius:0;
+  padding:clamp(.8rem, calc(2.24vw - 4px), 1.15rem);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:.7rem;
+  box-shadow:inset 0 .1rem .35rem rgba(0,0,0,.24);
+}
+/* the "picture" itself — the accent color fills the whole window cut
+   into the mat (set per logo below), not just a small chip floating
+   inside a cream backing */
+.frame-btn__art{
+  position:relative;
+  width:100%;
+  aspect-ratio:1/1;
+  border-radius:0;
+  overflow:hidden;
+  box-shadow:inset 0 0 0 .07rem rgba(34,31,30,.18);
+}
+.frame-btn__label{
+  font-family:"Cinzel","Poppins",serif;
+  font-weight:600;
+  font-size:clamp(.62rem, calc(.64vw + 5.12px), .72rem);
+  letter-spacing:.05em;
+  text-transform:uppercase;
+  color:#4a2c1a;
+  text-align:center;
+  line-height:1.35;
+}
+
+/* -- the three logos, drawn straight onto the full-bleed art color -- */
+
+/* a resume/CV icon — two stacked pages (outline only) with a person
+   avatar and text lines, all drawn in white against the peri tile */
+.frame-btn__art--resume{background:var(--peri)}
+.frame-btn__art--resume .fl-page--front{
+  position:absolute;
+  top:12%;bottom:10%;left:18%;right:18%;
+  border:.15rem solid #fff;
+  border-radius:.14rem;
+}
+.frame-btn__art--resume .fl-avatar-head{
+  position:absolute;top:13%;left:12%;
+  width:24%;aspect-ratio:1/1;
+  border-radius:50%;
+  background:#fff;
+}
+.frame-btn__art--resume .fl-avatar-body{
+  position:absolute;top:38%;left:6%;
+  width:36%;height:17%;
+  border-radius:50% 50% 0 0 / 100% 100% 0 0;
+  background:#fff;
+}
+.frame-btn__art--resume .fl-line{
+  position:absolute;left:9%;right:9%;height:6%;
+  background:#fff;border-radius:.08rem;
+}
+.frame-btn__art--resume .fl-line--sm{left:52%;right:9%;height:5%}
+
+/* a thread spool + pin, echoing the bookshelf's sewing shelf */
+.frame-btn__art--sewing{background:var(--blush)}
+.frame-btn__art--sewing .fl-spool{
+  position:absolute;left:26%;top:22%;bottom:22%;width:22%;
+  background:var(--wine);border-radius:.1rem;
+}
+.frame-btn__art--sewing .fl-spool::before,
+.frame-btn__art--sewing .fl-spool::after{
+  content:"";position:absolute;left:-45%;right:-45%;height:15%;
+  background:#c08b52;border-radius:.08rem;
+}
+.frame-btn__art--sewing .fl-spool::before{top:0}
+.frame-btn__art--sewing .fl-spool::after{bottom:0}
+.frame-btn__art--sewing .fl-pin{
+  position:absolute;bottom:22%;left:60%;
+  width:2.5%;height:52%;
+  background:#9aa0a6;
+  transform-origin:50% 100%;
+  transform:rotate(18deg);
+}
+.frame-btn__art--sewing .fl-pin::after{
+  content:"";position:absolute;top:-.58rem;left:50%;
+  width:.58rem;height:.58rem;margin-left:-.29rem;
+  border-radius:50%;background:var(--wine);
+}
+
+/* a little stack of Gobblet game pieces, same trapezoid recipe as
+   the bookshelf's .piece */
+.frame-btn__art--gobblet{background:var(--tomato)}
+.frame-btn__art--gobblet .fl-piece{
+  position:absolute;bottom:16%;
+  width:17%;
+  clip-path:polygon(26% 0, 74% 0, 100% 100%, 0 100%);
+}
+
+@media (max-width:750px){
+  /* nav collapses to a horizontal row of logo-only frames; the label
+     becomes a hover/focus tooltip instead of disappearing entirely */
+  .frame-nav{
+    flex-direction:row;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:.9rem;
+  }
+  .frame-btn{width:5.6rem;padding:.4rem}
+  .frame-btn__mat{padding:.55rem;gap:0}
+
+  .frame-btn__label{
+    position:absolute;
+    left:50%;
+    top:100%;
+    width:max-content;
+    max-width:9rem;
+    margin-top:.5rem;
+    /* back to full size — the shrink above was for the sidebar label */
+    font-size:.72rem;
+    background:#4a2c1a;
+    color:var(--cream);
+    padding:.4rem .65rem;
+    border-radius:.25rem;
+    text-align:center;
+    opacity:0;
+    visibility:hidden;
+    pointer-events:none;
+    transform:translate(-50%,-.3rem);
+    transition:opacity .15s ease, transform .15s ease, visibility .15s;
+    z-index:10;
+  }
+  /* little pointer, so the tooltip clearly belongs to the frame above it */
+  .frame-btn__label::after{
+    content:"";
+    position:absolute;
+    bottom:100%;left:50%;
+    width:0;height:0;
+    margin-left:-.28rem;
+    border:.28rem solid transparent;
+    border-bottom-color:#4a2c1a;
+  }
+  .frame-btn:hover .frame-btn__label,
+  .frame-btn:focus-visible .frame-btn__label{
+    opacity:1;
+    visibility:visible;
+    transform:translate(-50%,0);
+  }
+
+  /* the bigger sewing-icon pinhead above scales back down here so it
+     doesn't overwhelm the smaller logo */
+  .frame-btn__art--sewing .fl-pin::after{
+    top:-.36rem;
+    width:.36rem;height:.36rem;margin-left:-.18rem;
+  }
+}

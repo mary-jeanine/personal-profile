@@ -1,0 +1,114 @@
+/* ============================================================
+   Page chrome — header, sidebar navigation, page shell.
+   ============================================================ */
+
+:root{
+  --page-bg:#aeb194;
+  --nav-ink:#f3ead9;
+  --nav-ink-soft:#4a4470;
+
+  /* The sidebar's footprint, subtracted from the width the bookshelf
+     scales itself against; zeroed once the nav moves to the top.
+     Tracks nav.css's fluid frame width plus this sidebar's own .9rem
+     padding either side, so the column never leaves a gap beside the
+     frames as they shrink. */
+  --nav-w:clamp(10.8rem, calc(22.4vw - 24px + 1.8rem), 15rem);
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+
+body{
+  background:var(--page-bg);
+  min-height:100vh;
+  font-family: Georgia, serif;
+  color:var(--nav-ink);
+}
+
+.app{
+  display:flex;
+  flex-direction:column;
+  min-height:100vh;
+}
+
+/* --------------------------- crown molding ---------------------------
+   A milled profile faked with banded gradients: each hard color stop is
+   one facet of the moulding, the darker bands sitting where a cove or
+   quirk would fall into shadow. Same flat-fill vocabulary as the
+   bookshelf — no images. The base is the identical strip flipped, so the
+   two always stay in profile with each other. */
+
+.molding{
+  position:relative;
+  z-index:5;
+  flex:0 0 auto;
+  height:clamp(2.4rem, 3.3vw, 2.6rem);
+  background:linear-gradient(180deg,
+    #fdfaf3 0 12%,     /* top fillet, catching the ceiling light */    
+    #ffffff 12% 30%,   /* upper face */    
+    #f2ebdc 46% 58%,   /* cove, turning away from the light */    
+    #ffffff 63% 88%,   /* bead */    
+    #f2ebdc 88% 95%,    
+    #f2ebdc 90% 100%   /* bottom arris, the darkest edge */
+  );
+}
+
+/* the shadow the moulding throws down onto the wall */
+.molding::after{
+  content:"";
+  position:absolute;
+  left:0;right:0;
+  top:100%;
+  height:.7rem;
+  background:linear-gradient(180deg, rgba(60,50,35,.18), rgba(60,50,35,0));
+  pointer-events:none;
+}
+
+.molding--base{transform:scaleY(-1)}
+
+/* ------------------------- shell + sidebar ------------------------- */
+
+.app__body{
+  display:flex;
+  flex:1;
+  align-items:stretch;
+}
+
+/* holds the gold frame nav — see nav.css for the frames themselves */
+.sidebar{
+  flex:0 0 var(--nav-w);
+  width:var(--nav-w);
+  background:var(--page-bg);
+  padding:1.6rem .9rem;
+  display:flex;
+  justify-content:center;
+}
+
+/* ----------------------------- main ----------------------------- */
+
+/* the bookshelf's own centering, lifted off <body> so the scene sits
+   exactly as it did standalone */
+.main{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:1.6rem;
+  padding:3.4rem 1rem 3rem;
+}
+
+/* ------------------- narrow: sidebar becomes a top bar -------------------
+   Matched to nav.css's own 750px breakpoint, where the frames collapse to
+   a logo-only row — so the column and its container flip together. */
+
+@media (max-width:750px){
+  :root{--nav-w:0px}
+
+  .app__body{flex-direction:column}
+
+  .sidebar{
+    flex:0 0 auto;
+    width:100%;
+    padding:.9rem .8rem;
+    border-top:.06rem solid rgba(43,39,69,.15);
+  }
+}

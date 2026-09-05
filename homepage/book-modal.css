@@ -1,0 +1,367 @@
+/* ============================================================
+   Book-opening popup — the dialog a shelf button opens.
+   All text in here is set in EB Garamond (Google Fonts' open revival of
+   Claude Garamond), falling back to a locally installed "Garamond" and
+   then a generic serif — one typeface for the whole modal, title page
+   through entry notes and the page-turner arrows.
+   ============================================================ */
+
+.book-modal{
+  position:fixed;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  padding:2rem;
+  z-index:100;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .28s ease;
+}
+.book-modal.is-open{opacity:1;pointer-events:auto}
+.book-modal__backdrop{
+  position:absolute;inset:0;
+  width:100%;height:100%;
+  border:none;padding:0;margin:0;
+  background:rgba(17,14,11,.6);
+  backdrop-filter:blur(3px);
+  cursor:pointer;
+}
+.book-modal__book{
+  position:relative;
+  display:flex;
+  width:min(50rem,94vw);
+  height:min(34rem,82vh);
+  perspective:2200px;
+  box-sizing:border-box;
+  padding:.5rem .9rem;
+  background:var(--book-accent, var(--peri));
+  border-radius:.2rem;
+  box-shadow:0 2.6rem 4.2rem rgba(0,0,0,.42), 0 .8rem 1.6rem rgba(0,0,0,.28);
+  transform:translateY(2.4rem) scale(.78);
+  transition:transform .45s cubic-bezier(.22,.9,.32,1.12);
+}
+.book-modal.is-open .book-modal__book{transform:translateY(0) scale(1)}
+.book-modal__spine{
+  position:absolute;top:.5rem;bottom:.5rem;left:50%;
+  width:3.6rem;margin-left:-1.8rem;
+  /* a huge vertical radius keeps the visible band's cross-section
+     constant top-to-bottom — only the horizontal falloff shows */
+  background:radial-gradient(ellipse 58% 400% at 50% 50%, rgba(0,0,0,.15) 0%, rgba(0,0,0,.06) 48%, rgba(0,0,0,0) 92%);
+  z-index:3;
+  pointer-events:none;
+}
+.book-modal__page{
+  position:relative;
+  width:50%;
+  background:var(--cream);
+  transform-style:preserve-3d;
+  backface-visibility:hidden;
+  transition:transform .5s cubic-bezier(.22,.85,.24,1);
+}
+/* a narrow striated strip along the outer (fore-edge) side, suggesting
+   the edge of a stack of pages, sitting between the cover and the paper —
+   vertical striations, each line standing for one sheet in the stack */
+.book-modal__page::before{
+  content:'';
+  position:absolute;
+  top:0;bottom:0;
+  width:1rem;
+  background-color:#ded3ba;
+  background-image:repeating-linear-gradient(
+    to right,
+    rgba(112,97,72,.34) 0,
+    rgba(112,97,72,.34) .06rem,
+    rgba(112,97,72,0) .06rem,
+    rgba(112,97,72,0) .22rem
+  );
+  pointer-events:none;
+}
+.book-modal__page--left{
+  transform-origin:right center;
+  transform:rotateY(90deg);
+  border-radius:.2rem 0 0 .2rem;
+  box-shadow:0 .3rem .8rem rgba(0,0,0,.18);
+}
+.book-modal__page--left::before{left:0;border-radius:.2rem 0 0 .2rem}
+.book-modal__page--right{
+  transform-origin:left center;
+  transform:rotateY(-90deg);
+  border-radius:0 .2rem .2rem 0;
+  box-shadow:0 .3rem .8rem rgba(0,0,0,.18);
+  /* the entry area scrolls in the space left over; the pager is a
+     sibling outside it, so it stays anchored to the bottom of the page
+     instead of drifting up or down with how long the entry text is */
+  display:flex;
+  flex-direction:column;
+}
+.book-modal__page--right .book-modal__page-inner{
+  height:auto;
+  flex:1 1 auto;
+  min-height:0;
+}
+.book-modal__page--right::before{right:0;border-radius:0 .2rem .2rem 0}
+.book-modal.is-open .book-modal__page--left,
+.book-modal.is-open .book-modal__page--right{
+  transform:rotateY(0deg);
+}
+.book-modal__page-inner{
+  height:100%;
+  overflow-y:auto;
+  padding:2.3rem 2.2rem 2.4rem;
+}
+.book-modal__page--left .book-modal__page-inner{padding-right:1.6rem}
+.book-modal__page--right .book-modal__page-inner{padding-left:1.6rem}
+
+/* the left page reads as a title page: title/byline anchored at the top,
+   publisher/year anchored at the foot, with the book's own height
+   supplying the space between — same layout idea as a printed novel's
+   title page (title, "by" line, then publisher + year down at the foot) */
+.book-modal__page--left .book-modal__page-inner{
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  align-items:center;
+  text-align:center;
+}
+.book-modal__titlepage-head{margin-top:1rem}
+.book-modal__titlepage-foot{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:.35rem;
+  margin-top:1rem;
+}
+
+.book-modal__kicker{
+  display:block;
+  font-family:"EB Garamond","Garamond",Georgia,serif;
+  font-weight:400;
+  font-size:.85rem;
+  letter-spacing:.12em;
+  color:#7e7e7e;
+  margin-bottom: 3rem;
+}
+.book-modal__heading{
+  font-family:"EB Garamond","Garamond",Georgia,serif;
+  font-weight:700;
+  font-size:1.7rem;
+  line-height:1.25;
+  letter-spacing:.02em;
+  margin-bottom:2rem;
+  text-wrap:balance;
+}
+.book-modal__blurb{
+  font-family:"EB Garamond","Garamond",Georgia,serif;
+  font-weight:400;
+  font-size:.95rem;
+  line-height:1.6;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  color:var(--char);
+}
+.book-modal__company{
+  font-family:"EB Garamond","Garamond",Georgia,serif;
+  font-weight:600;
+  font-size:1rem;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--ink);
+  margin:0;
+}
+.book-modal__company:empty{display:none}
+.book-modal__entry + .book-modal__entry{
+  margin-top:1.3rem;
+  padding-top:1.3rem;
+  border-top:.06rem dashed var(--sand);
+}
+.book-modal__entry-head{
+  display:flex;
+  align-items:baseline;
+  gap:.8rem;
+  /* wrap-reverse: identical single-line layout when both fit (role left,
+     when right); when they don't, the overflowing "when" gets its own
+     line and that line lands above rather than below */
+  flex-wrap:wrap-reverse;
+}
+.book-modal__role{
+  font-family:"EB Garamond","Garamond",Georgia,serif;
+  font-weight:600;
+  font-size:1.05rem;
+  color:#1c277b;
+}
+.book-modal__when{
+  /* margin-left:auto (rather than justify-content:space-between on the
+     parent) pushes "when" to the right edge of whatever line it's on —
+     including when wrap-reverse gives it a line of its own, where
+     space-between would collapse a single item back to the left */
+  margin-left:auto;
+  font-family:"EB Garamond","Garamond",Georgia,serif;
+  font-weight:500;
+  font-size:.75rem;
+  color:#7e7e7e;
+  white-space:nowrap;
+}
+.book-modal__org{
+  font-family:"EB Garamond","Garamond",Georgia,serif;
+  font-weight:500;
+  font-size:.75rem;
+  color:#1c277b;
+  margin-top:.15rem;
+  font-style: italic;
+}
+.book-modal__note{
+  font-family:"EB Garamond","Garamond",Georgia,serif;
+  font-size:.75rem;
+  line-height:1.55;
+  color:var(--ink);
+  margin-top:.5rem;
+}
+/* **double asterisks** in a note land here — darkened as well as
+   weighted, so the emphasis carries against the muted note color */
+.book-modal__note strong{
+  font-weight:600;
+  color:var(--ink);
+}
+
+/* the page turner: bare chevrons anchored to the page's own left and
+   right edges, with the count centered between them — no button box,
+   just the glyph, so it reads as part of the page rather than UI chrome.
+   Lives outside the scrolling entry area (see .book-modal__page--right
+   above), so it's a fixed-height footer instead of trailing content. */
+.book-modal__pager{
+  flex:0 0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:1rem;
+  padding:.7rem 2.2rem 1.3rem 1.6rem;
+}
+.book-modal__pager:empty{display:none}
+.book-modal__pagebtn{
+  flex:0 0 auto;
+  background:none;
+  border:none;
+  padding:.2rem .3rem;
+  margin:0;
+  font-family:"EB Garamond","Garamond",Georgia,serif;
+  font-size:1.6rem;
+  line-height:1;
+  color:var(--ink);
+  cursor:pointer;
+  transition:color .15s ease, transform .15s ease;
+}
+.book-modal__pagebtn:hover:not(:disabled){
+  color:var(--peri);
+  transform:scale(1.15);
+}
+.book-modal__pagebtn:focus-visible{
+  outline:.12rem solid var(--peri);
+  outline-offset:.15rem;
+  border-radius:.2rem;
+}
+.book-modal__pagebtn:disabled{
+  color:#c9c2b4;
+  cursor:default;
+}
+.book-modal__pagenum{
+  flex:1 1 auto;
+  text-align:center;
+  font-family:"EB Garamond","Garamond",Georgia,serif;
+  font-size:.75rem;
+  letter-spacing:.04em;
+  color:#7e7e7e;
+}
+.book-modal__close{
+  position:absolute;top:-1rem;right:-1rem;
+  width:2.4rem;height:2.4rem;
+  border-radius:50%;
+  border:none;
+  background:var(--cream);
+  color:var(--ink);
+  font-size:1.3rem;
+  line-height:1;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;
+  box-shadow:0 .3rem .6rem rgba(0,0,0,.25);
+  z-index:6;
+  transition:transform .15s ease;
+}
+.book-modal__close:hover{transform:scale(1.08)}
+
+/* narrow viewports: stack the pages instead of flipping them open
+   side by side, so the text always has room to breathe */
+/* Narrow viewports: the book is shown half open — a single leaf, as if
+   you were looking at just the right-hand page. The two page elements
+   still hold the content, but every seam between them is removed so they
+   read as one continuous sheet: no separate radii or shadows, one
+   fore-edge running the outer side, and the gutter shading down the
+   inner side where the rest of the book falls away off-screen. */
+@media (max-width:640px){
+  /* flush to the left edge, with the cover reveal only on the three
+     sides you can actually see */
+  .book-modal{
+    padding:1.1rem 1.1rem 1.1rem 0;
+    justify-content:flex-start;
+  }
+  .book-modal__book{
+    flex-direction:column;
+    width:min(23rem,96vw);
+    height:min(38rem,86vh);
+    perspective:none;
+    padding-left:0;
+    border-radius:0 .2rem .2rem 0;
+  }
+
+  /* the gutter: the page curving down into the spine, which sits just
+     off-screen to the left */
+  .book-modal__spine{
+    left:0;
+    right:auto;
+    width:1.9rem;
+    margin-left:0;
+    transform:none;
+    background:linear-gradient(90deg,
+      rgba(43,34,20,.30) 0%,
+      rgba(43,34,20,.15) 34%,
+      rgba(43,34,20,.06) 64%,
+      rgba(43,34,20,0) 100%);
+  }
+
+  .book-modal__page{
+    width:100%;
+    transform:none;
+    border-radius:0;
+    box-shadow:none;
+    opacity:0;
+    transition:opacity .35s ease .05s;
+  }
+  .book-modal.is-open .book-modal__page--left,
+  .book-modal.is-open .book-modal__page--right{opacity:1}
+
+  /* the title block takes only the height it needs; the entries below it
+     get the rest and do the scrolling, so the heading stays put */
+  .book-modal__page--left{flex:0 0 auto}
+  .book-modal__page--right{flex:1 1 auto;min-height:0}
+
+  .book-modal__page--left .book-modal__page-inner{
+    height:auto;
+    overflow:visible;
+    padding:1.6rem 1.5rem .4rem;
+  }
+  .book-modal__page--right .book-modal__page-inner{
+    padding:.9rem 1.5rem 1.6rem;
+  }
+  .book-modal__pager{
+    padding:.5rem 1.5rem 1rem;
+  }
+
+  /* one fore-edge down the outer side: each half carries its own segment
+     and, stacked, they line up into a single unbroken strip */
+  .book-modal__page::before{left:auto;right:0}
+  .book-modal__page--left::before{border-radius:.2rem 0 0 0}
+  .book-modal__page--right::before{border-radius:0 0 .2rem 0}
+
+  .book-modal__heading{font-size:1.5rem}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .book-modal, .book-modal__book, .book-modal__page{transition:none}
+}

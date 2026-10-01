@@ -55,39 +55,47 @@ body.is-home .frame-btn[data-frame="home"]{display:none}
 
 /* ---------------------------------------------------------------
    page transition: clicking a frame that leads to another page (see
-   nav.js) lifts it out of the sidebar, pins it in place with its exact
-   on-screen position, then grows it to fill the viewport before the
-   browser navigates — the frame becomes the page it's opening. Anchor
-   links within the same page (Home on the homepage, Sewing/Gobblet's
-   jump to a shelf) are left alone; nav.js only arms this for links to
-   a different document.
+   nav.js) grows it to fill the main content area — not the sidebar,
+   which is the same nav on the page being opened and so has no reason
+   to move — before the browser navigates. The frame becomes the page
+   it's opening. Anchor links within the same page (Home on the
+   homepage, Sewing/Gobblet's jump to a shelf) are left alone; nav.js
+   only arms this for links to a different document.
+
+   Only `transform` is animated (nav.js sets the frame's real box to
+   its final size/position up front, then fakes the starting look with
+   a matching translate+scale and animates that away) — layout
+   properties like top/left/width/height force a layout recalculation
+   every frame, where transform is handled by the compositor alone,
+   which is what actually makes this smooth.
    --------------------------------------------------------------- */
 .frame-btn--flying{
   margin:0;
   z-index:1000;
-  transition:top .5s cubic-bezier(.4,0,.2,1), left .5s cubic-bezier(.4,0,.2,1),
-    width .5s cubic-bezier(.4,0,.2,1), height .5s cubic-bezier(.4,0,.2,1);
 }
 .frame-btn--flying:hover,
-.frame-btn--flying:focus-visible{transform:none;filter:none}
+.frame-btn--flying:focus-visible{filter:none}
 
-/* dims everything else while a frame is flying, so it reads as the
-   thing coming into focus rather than just growing on top of the page */
-body.is-page-transitioning .app{
-  transition:opacity .35s ease;
-  opacity:0;
-}
-body.is-page-transitioning::after{
-  content:"";
-  position:fixed;inset:0;
+/* a scrim sized to the main content area (set inline by nav.js to
+   match its rect) — dims only the content that's being replaced,
+   leaving the sidebar visibly untouched since it isn't going anywhere */
+.page-transition-scrim{
+  position:fixed;
   background:rgba(17,14,11,.35);
-  z-index:999;
+  opacity:0;
+  z-index:998;
   pointer-events:none;
 }
 
+/* the page's own current content fades as the clicked frame grows to
+   cover it */
+.main.is-leaving{
+  transition:opacity .2s ease;
+  opacity:0;
+}
+
 @media (prefers-reduced-motion:reduce){
-  .frame-btn--flying{transition:none}
-  body.is-page-transitioning .app{transition:none}
+  .main.is-leaving{transition:none}
 }
 
 /* the mat board — thick, with pointed (square-cut) corners, the way
@@ -95,6 +103,14 @@ body.is-page-transitioning::after{
 .frame-btn__mat{
   position:relative;
   width:100%;
+  /* fills whatever height .frame-btn actually has, rather than just
+     its own content's natural height — a no-op normally (.frame-btn's
+     height is auto, already exactly the mat's height, nothing to grow
+     into) but matters once nav.js pins .frame-btn to an explicit
+     height while flying: without this the mat stops at its content
+     height and the gold padding below it, uncovered, reads as a much
+     thicker border than the .6rem on the other three sides */
+  flex:1 1 auto;
   background:var(--bone);
   border-radius:0;
   padding:clamp(.8rem, calc(2.24vw - 4px), 1.15rem);

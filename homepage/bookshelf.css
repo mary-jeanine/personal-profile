@@ -235,6 +235,12 @@
 
 /* -- pattern binder -- */
 .binder{
+  /* the real binder is now an <a> (was a div[role=button]) so it leads
+     straight to the Sewing Pattern Designer page — <a> defaults to
+     display:inline, which would make the explicit width/height below
+     no-op, so it needs to be block here */
+  display:block;
+  text-decoration:none;
   position:relative;
   width:6.2em;height:25em;
   background:var(--sky);
@@ -412,7 +418,11 @@
 }
 
 /* -- Gobblet -- */
-.gobblet{padding:0 2em .9em;justify-content:space-between}
+/* the real gobblet box is now an <a> (was a div[role=button]) so it
+   leads straight to the Gobblet page — display:flex is already set on
+   .box above so there's no inline-collapse risk like .binder had, this
+   just guards against the default link underline/color */
+.gobblet{padding:0 2em .9em;justify-content:space-between;text-decoration:none}
 .gob__logo{position:relative;display:flex;flex-direction:column;align-items:center;padding-top:1.9em;z-index:2}
 .gob__arc{
   position:absolute;top:.15em;left:50%;transform:translateX(-50%);

@@ -1,0 +1,96 @@
+/* ============================================================
+   Shared project-page chrome — the same large gold picture-frame
+   treatment as resume.css (gradient/shadow recipe copied verbatim, so
+   every page's frame reads as the same object at a different size),
+   generic title/kicker/section classes so any project page (Sewing
+   Pattern Designer, Gobblet, and whatever comes next) can reuse the
+   same stylesheet instead of each duplicating it. Typography matches
+   the book-modal/resume pattern: Cinzel for headings, EB Garamond for
+   body text.
+   ============================================================ */
+
+.page-frame{
+  position:relative;
+  /* % rather than vw: .main already excludes the sidebar's width from
+     its own box (see site.css), so a percentage of it can't overflow
+     past the sidebar the way a vw-based width would */
+  width:min(60rem, 100%);
+  padding:1.6rem;
+  background:linear-gradient(155deg,#f6d68c 0%,var(--gold) 42%,#8a661f 82%,#f1c876 100%);
+  box-shadow:
+    inset 0 .09rem 0 rgba(255,255,255,.55),
+    inset 0 -.12rem 0 rgba(0,0,0,.35),
+    0 1.2rem 2.4rem rgba(0,0,0,.32);
+  /* settles into place on load, echoing the frame it grew from on the
+     way in from the nav (see nav.js) */
+  animation:page-frame-settle .5s cubic-bezier(.22,.9,.32,1.12) both;
+}
+@keyframes page-frame-settle{
+  from{opacity:0;transform:scale(.92)}
+  to{opacity:1;transform:scale(1)}
+}
+@media (prefers-reduced-motion:reduce){
+  .page-frame{animation:none}
+}
+
+.page-frame__mat{
+  background:var(--bone);
+  padding:1.6rem;
+  box-shadow:inset 0 .1rem .35rem rgba(0,0,0,.24);
+}
+
+.page-frame__sheet{
+  background:var(--cream);
+  box-shadow:inset 0 0 0 .07rem rgba(34,31,30,.18);
+  padding:2.4rem clamp(1.4rem, 4vw, 3rem) 2.8rem;
+}
+
+/* ----------------------------- header ----------------------------- */
+
+.page-title{
+  font-family:"Cinzel",Georgia,serif;
+  font-weight:700;
+  font-size:clamp(1.5rem, 4vw, 2rem);
+  letter-spacing:.03em;
+  text-align:center;
+  color:var(--ink);
+}
+
+.page-kicker{
+  font-family:"EB Garamond","Garamond",Georgia,serif;
+  font-style:italic;
+  text-align:center;
+  color:var(--note);
+  font-size:.9rem;
+  margin-top:.6rem;
+}
+
+/* ----------------------------- sections ----------------------------- */
+
+.page-section{
+  font-family:"Cinzel",Georgia,serif;
+  font-weight:600;
+  font-size:.95rem;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--ink);
+  border-bottom:.09rem solid var(--gold);
+  padding-bottom:.3rem;
+  margin-top:1.8rem;
+  margin-bottom:1rem;
+}
+.page-section:first-of-type{margin-top:2.2rem}
+
+.page-placeholder{
+  font-family:"EB Garamond","Garamond",Georgia,serif;
+  font-style:italic;
+  font-size:.92rem;
+  line-height:1.6;
+  color:var(--note);
+}
+
+@media (max-width:640px){
+  .page-frame{padding:.9rem;width:96vw}
+  .page-frame__mat{padding:.9rem}
+  .page-frame__sheet{padding:1.8rem 1.2rem 2.2rem}
+}
